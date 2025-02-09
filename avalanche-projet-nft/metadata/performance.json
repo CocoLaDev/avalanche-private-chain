@@ -1,0 +1,28 @@
+{
+  "year": "3rd Year",
+  "studentId": "ESGI-2025001",
+  "studentName": "Juan Pérez",
+  "courses": [
+    {
+      "courseName": "Algorithmes avancés",
+      "grade": "A",
+      "result": "18/20",
+      "comments": "Excellente compréhension des concepts, participation active."
+    },
+    {
+      "courseName": "Sécurité informatique",
+      "grade": "B+",
+      "result": "16/20",
+      "comments": "Bonne performance, mais peut encore s'améliorer."
+    }
+  ],
+  "yearStartDate": "2022-09-01",
+  "yearEndDate": "2023-06-30",
+  "academicStatus": {
+    "status": "SUCCESS",
+    "comments": "Performance globale satisfaisante, participation aux projets extra-curriculaires remarquable."
+  },
+  "ipfsCID": "ipfs://QmExamplePerformanceCID",
+  "issuer": "ESGI",
+  "signer": "0x351024A4EC50612C8D1CF70cd508F77f37Da53F8"
+}
