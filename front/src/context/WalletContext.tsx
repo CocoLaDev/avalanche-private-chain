@@ -1,6 +1,7 @@
+// front/src/context/WalletContext.tsx
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 import { ethers } from "ethers";
 
 interface WalletContextProps {
@@ -9,54 +10,40 @@ interface WalletContextProps {
     disconnectWallet: () => void;
 }
 
-const WalletContext = createContext<WalletContextProps>({
-    account: null,
-    connectWallet: async () => {},
-    disconnectWallet: () => {},
-});
+const WalletContext = createContext<WalletContextProps | undefined>(undefined);
 
 export const WalletProvider = ({ children }: { children: ReactNode }) => {
-    const [account, setAccount] = useState<string | null>(null);
+    const [account, setAccount] = useState<string | null>(
+        typeof window !== "undefined" ? localStorage.getItem("walletAddress") : null
+    );
 
-    // Fonction pour connecter le wallet et sauvegarder l'adresse dans le localStorage
     const connectWallet = async () => {
-        if (!window.ethereum) {
+        if (typeof window.ethereum === "undefined") {
             alert("MetaMask n'est pas disponible");
             return;
         }
         try {
+            // Demande de connexion à MetaMask
             const accounts: string[] = await window.ethereum.request({ method: "eth_requestAccounts" });
-            const connectedAccount = accounts[0];
-            setAccount(connectedAccount);
-            localStorage.setItem("walletAddress", connectedAccount);
+            const selectedAccount = accounts[0];
+            setAccount(selectedAccount);
+            localStorage.setItem("walletAddress", selectedAccount);
+            console.log("Wallet connected:", selectedAccount);
+            // Optionnel : rafraîchir la page pour mettre à jour l'affichage
+            // window.location.reload();
         } catch (error) {
-            console.error("Erreur lors de la connexion au wallet:", error);
+            console.error("Erreur lors de la connexion du wallet:", error);
         }
     };
 
-    // Fonction pour déconnecter le wallet : efface l'état et le localStorage
     const disconnectWallet = () => {
+        // Efface l'adresse dans l'état et dans le localStorage
         setAccount(null);
         localStorage.removeItem("walletAddress");
+        console.log("Wallet déconnecté");
+        // Optionnel : rafraîchir la page pour mettre à jour l'affichage
+        // window.location.reload();
     };
-
-    // Au montage, vérifier si des comptes sont déjà connectés via eth_accounts
-    useEffect(() => {
-        async function checkWalletConnection() {
-            if (window.ethereum) {
-                try {
-                    const accounts: string[] = await window.ethereum.request({ method: "eth_accounts" });
-                    if (accounts && accounts.length > 0) {
-                        setAccount(accounts[0]);
-                        localStorage.setItem("walletAddress", accounts[0]);
-                    }
-                } catch (error) {
-                    console.error("Erreur lors de la récupération des comptes:", error);
-                }
-            }
-        }
-        checkWalletConnection();
-    }, []);
 
     return (
         <WalletContext.Provider value={{ account, connectWallet, disconnectWallet }}>
@@ -65,4 +52,10 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     );
 };
 
-export const useWallet = () => useContext(WalletContext);
+export const useWallet = (): WalletContextProps => {
+    const context = useContext(WalletContext);
+    if (context === undefined) {
+        throw new Error("useWallet must be used within a WalletProvider");
+    }
+    return context;
+};

@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import dynamic from "next/dynamic";
 import { useMyNFTs } from "../hooks/useMyNFTs";
 
-// Cargar el componente de listado sin SSR si es necesario
+// Chargement du composant de liste sans SSR si nécessaire
 const NftsList = dynamic(() => import("@/components/nftsList"), { ssr: false });
 
 const MesDiplomes = () => {
@@ -11,7 +11,13 @@ const MesDiplomes = () => {
     return (
         <div className="px-24 py-12">
             <h1 className="text-3xl font-bold text-gray-900 mb-5">Mes Diplômes</h1>
-            <NftsList list={myNFTs} />
+            {myNFTs.length === 0 ? (
+                <p className="text-center text-gray-600">
+                    Aucun diplôme n'a encore été minté pour ce compte.
+                </p>
+            ) : (
+                <NftsList list={myNFTs} />
+            )}
         </div>
     );
 };

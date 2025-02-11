@@ -1,3 +1,4 @@
+// src/app/hooks/useMyNFTs.ts
 "use client";
 
 import { useState, useEffect } from "react";
@@ -57,13 +58,43 @@ export function useMyNFTs(): Diplome[] {
 
                 for (let i = 0; i < count; i++) {
                     try {
-                        const owner = await contract.ownerOf(i);
+                        // Tenter de récupérer le propriétaire du token
+                        let owner;
+                        try {
+                            owner = await contract.ownerOf(i);
+                        } catch (err: any) {
+                            if (
+                                err.message.includes("ERC721NonexistentToken") ||
+                                err.message.toLowerCase().includes("missing revert data")
+                            ) {
+                                console.warn(`Le token ${i} n'existe pas (ownerOf) – ignoré.`);
+                                continue;
+                            } else {
+                                throw err;
+                            }
+                        }
                         if (owner.toLowerCase() !== userAddress) {
                             continue;
                         }
 
-                        const tokenUri: string = await contract.tokenURI(i);
+                        // Tenter de récupérer le tokenURI
+                        let tokenUri: string;
+                        try {
+                            tokenUri = await contract.tokenURI(i);
+                        } catch (err: any) {
+                            if (
+                                err.message.includes("ERC721NonexistentToken") ||
+                                err.message.toLowerCase().includes("missing revert data")
+                            ) {
+                                console.warn(`Le token ${i} n'existe pas (tokenURI) – ignoré.`);
+                                continue;
+                            } else {
+                                throw err;
+                            }
+                        }
                         console.log(`Token ${i} URI: ${tokenUri}`);
+
+                        // Récupérer les métadonnées via fetch
                         const res = await fetch(tokenUri);
                         console.log(`Status for token ${i}: ${res.status} ${res.statusText}`);
                         if (!res.ok) {
@@ -82,11 +113,11 @@ export function useMyNFTs(): Diplome[] {
                             image: metadata.image || "",
                             studentId: metadata.studentId || "",
                             Program: metadata.Program || "",
+                            programStatus: metadata.programStatus || { status: "", certificateIssuedDate: "", comments: "" },
                             studentName: metadata.studentName || "",
                             courses: metadata.courses || [],
                             yearStartDate: metadata.yearStartDate || "",
                             yearEndDate: metadata.yearEndDate || "",
-                            programStatus: metadata.programStatus || { status: "", certificateIssuedDate: "", comments: "" },
                             academicStatus: metadata.academicStatus || { status: "", comments: "" },
                             ipfsCID: metadata.ipfsCID || "",
                             issuer: metadata.issuer || "",

@@ -1,13 +1,48 @@
-
+// front/src/components/nftsList.tsx
 import { Diplome, PerformanceNFT } from "@/interfaces/diplomes";
 import Image from "next/image";
+import { revokeNFT } from "@/services/nftService";
+import { ethers } from "ethers";
+import { useState } from "react";
 
-// Función de type guard
+// Fonction de type guard pour vérifier si c'est un NFT de performance
 function isPerformanceNFT(item: Diplome): item is PerformanceNFT {
     return (item as PerformanceNFT).studentName !== undefined;
 }
 
 const NftsList = ({ list }: { list: Diplome[] }) => {
+    const [revokeMessage, setRevokeMessage] = useState<string>("");
+
+    // Fonction pour révoquer un NFT et rafraîchir la page après confirmation
+    const handleRevoke = async (tokenId: number) => {
+        try {
+            setRevokeMessage(`Révocation du token ${tokenId} en cours...`);
+            const tx = await revokeNFT(tokenId);
+            // Récupérer le hash de la transaction (tx.hash ou tx.transactionHash)
+            const txHash = (tx as any).hash || (tx as any).transactionHash;
+            setRevokeMessage(`Transaction de révocation envoyée: ${txHash}`);
+
+            // Créer un provider depuis window.ethereum pour attendre la confirmation
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            await provider.waitForTransaction(txHash);
+
+            setRevokeMessage(`Token ${tokenId} révoqué avec succès!`);
+
+            // Rafraîchir la page pour mettre à jour l'affichage
+            window.location.reload();
+        } catch (error: any) {
+            console.error("Erreur lors de la révocation du token", tokenId, error);
+            // Si l'erreur indique que l'utilisateur n'est pas autorisé, afficher un message explicite
+            if (error.message && error.message.toLowerCase().includes("missing revert data")) {
+                setRevokeMessage(
+                    `Vous n'êtes pas administrateur et vous n'avez pas la permission de révoquer ce diplôme.`
+                );
+            } else {
+                setRevokeMessage(`Erreur lors de la révocation du token ${tokenId}: ${error.message}`);
+            }
+        }
+    };
+
     return (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {list.map((item, index) => (
@@ -26,7 +61,6 @@ const NftsList = ({ list }: { list: Diplome[] }) => {
                                     Étudiant: {item.studentName} - {item.studentId}
                                 </p>
                             ) : (
-                                // Para el NFT de programme, puedes mostrar solo el studentId u otro dato
                                 <p className="text-sm text-gray-600">
                                     Étudiant: {item.studentId}
                                 </p>
@@ -35,7 +69,7 @@ const NftsList = ({ list }: { list: Diplome[] }) => {
                         <div className="hidden sm:block sm:shrink-0">
                             {item.image ? (
                                 <Image
-                                    alt="Diplome"
+                                    alt="Diplôme"
                                     src={item.image}
                                     className="size-16 rounded-lg object-cover shadow-xs"
                                     width={200}
@@ -63,12 +97,12 @@ const NftsList = ({ list }: { list: Diplome[] }) => {
                             <dd className="text-xs text-gray-500">Localisation</dd>
                         </div>
                     </dl>
-                    {/* Si es un NFT de performance, mostrar los cursos */}
+                    {/* Si c'est un NFT de performance, afficher les cours */}
                     {isPerformanceNFT(item) && item.courses && (
                         <div className="mt-4">
                             <h4 className="text-md font-bold text-gray-900">Cours</h4>
                             <ul>
-                                {item.courses.map((course: { courseName: string; grade: string; result: string; comments: string }, idx: number) => (
+                                {item.courses.map((course, idx) => (
                                     <li key={idx} className="text-sm text-gray-600">
                                         {course.courseName}: {course.grade} ({course.result}) - {course.comments}
                                     </li>
@@ -76,8 +110,21 @@ const NftsList = ({ list }: { list: Diplome[] }) => {
                             </ul>
                         </div>
                     )}
+                    <div className="mt-4">
+                        <button
+                            onClick={() => handleRevoke(item.tokenId)}
+                            className="rounded-md bg-red-600 px-4 py-2 text-white text-sm"
+                        >
+                            Révoquer
+                        </button>
+                    </div>
                 </div>
             ))}
+            {revokeMessage && (
+                <div className="col-span-full text-center text-red-500 mt-4">
+                    {revokeMessage}
+                </div>
+            )}
         </div>
     );
 };

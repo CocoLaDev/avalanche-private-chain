@@ -35,22 +35,27 @@ export function useNFTs(): Diplome[] {
                 // Instancier le contrat en lecture seule
                 const contract = new ethers.Contract(contractAddress, NFT_ABI.abi, provider);
 
-                let countBN = await contract.getCount();
+                const countBN = await contract.getCount();
                 const count = Number(countBN);
                 console.log("Nombre total de NFT :", count);
                 let items: Diplome[] = [];
 
                 for (let i = 0; i < count; i++) {
                     try {
+                        // Récupérer l'URL du tokenURI
                         const tokenUri: string = await contract.tokenURI(i);
                         console.log(`Token ${i} URI: ${tokenUri}`);
                         const res = await fetch(tokenUri);
                         console.log(`Status for token ${i}: ${res.status} ${res.statusText}`);
                         if (!res.ok) {
-                            console.error(`Erreur lors du fetch des métadonnées pour le token ${i}: ${res.status} ${res.statusText}`);
+                            console.error(
+                                `Erreur lors du fetch des métadonnées pour le token ${i}: ${res.status} ${res.statusText}`
+                            );
                             continue;
                         }
                         const metadata = await res.json();
+                        console.log(`Token ${i} metadata:`, metadata);
+
                         items.push({
                             tokenId: i,
                             title: metadata.title || "",
@@ -60,7 +65,8 @@ export function useNFTs(): Diplome[] {
                             image: metadata.image || "",
                             studentId: metadata.studentId || "",
                             Program: metadata.Program || "",
-                            programStatus: metadata.programStatus || { status: "", certificateIssuedDate: "", comments: "" },
+                            programStatus:
+                                metadata.programStatus || { status: "", certificateIssuedDate: "", comments: "" },
                             studentName: metadata.studentName || "",
                             courses: metadata.courses || [],
                             yearStartDate: metadata.yearStartDate || "",
@@ -70,7 +76,12 @@ export function useNFTs(): Diplome[] {
                             issuer: metadata.issuer || "",
                             signer: metadata.signer || ""
                         });
-                    } catch (err) {
+                    } catch (err: any) {
+                        // Si l'erreur indique que le token n'existe pas, on le passe
+                        if (err.message && err.message.includes("Token does not exist")) {
+                            console.warn(`Token ${i} n'existe plus, ignoré.`);
+                            continue;
+                        }
                         console.error("Erreur lors du chargement du token", i, err);
                     }
                 }

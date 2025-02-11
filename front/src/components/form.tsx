@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Diplome } from "@/interfaces/diplomes";
 import { uploadFile, uploadJson } from "@/services/uploadFile";
 import { mintDiplomeNFT } from "../services/nftService";
@@ -30,8 +30,8 @@ const Form = () => {
         const location = (document.getElementById("location") as HTMLInputElement).value;
         const description = (document.getElementById("description") as HTMLTextAreaElement).value;
 
-        // Construire l'objet métadonnées pour le NFT en respectant la structure de vos interfaces
-        // Ici, nous utilisons la structure d'un NFT de Programme (les champs spécifiques à la performance sont laissés vides)
+        // Construire l'objet métadonnées pour le NFT en respectant la structure de vos interfaces.
+        // Ici, nous utilisons la structure d'un NFT de Programme.
         const data: Diplome = {
             tokenId: 0, // Ce champ sera attribué par le contrat
             title,
@@ -59,7 +59,13 @@ const Form = () => {
             return;
         }
 
-        const metadataUrl = `https://${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${metadataCid}`;
+        // Vérifier si metadataCid est déjà une URL complète
+        let metadataUrl: string;
+        if (metadataCid.startsWith("http")) {
+            metadataUrl = metadataCid;
+        } else {
+            metadataUrl = `https://${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${metadataCid}`;
+        }
         console.log("Metadata URL:", metadataUrl);
 
         // Appeler la fonction de mint pour créer le NFT avec la metadata
