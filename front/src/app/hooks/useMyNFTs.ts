@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import NFT_ABI from "../../abis/ESGI_diplomes.json";
+import NFT_ABI from "../../abis/ESGI_diplomes.json"; // Assurez-vous que le chemin est correct
 import { Diplome } from "@/interfaces/diplomes";
 
 declare global {
@@ -58,15 +58,15 @@ export function useMyNFTs(): Diplome[] {
 
                 for (let i = 0; i < count; i++) {
                     try {
-                        // Tenter de récupérer le propriétaire du token
-                        let owner;
+                        // Vérifier que le token existe via ownerOf
                         try {
-                            owner = await contract.ownerOf(i);
+                            await contract.ownerOf(i);
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         } catch (err: any) {
                             if (
-                                err.message.includes("ERC721NonexistentToken") ||
-                                err.message.toLowerCase().includes("missing revert data")
+                                err.includes("erc721nonexistenttoken") ||
+                                err.includes("token does not exist") ||
+                                err.includes("missing revert data")
                             ) {
                                 console.warn(`Le token ${i} n'existe pas (ownerOf) – ignoré.`);
                                 continue;
@@ -74,19 +74,17 @@ export function useMyNFTs(): Diplome[] {
                                 throw err;
                             }
                         }
-                        if (owner.toLowerCase() !== userAddress) {
-                            continue;
-                        }
 
-                        // Tenter de récupérer le tokenURI
+                        // Récupérer le tokenURI
                         let tokenUri: string;
                         try {
                             tokenUri = await contract.tokenURI(i);
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         } catch (err: any) {
                             if (
-                                err.message.includes("ERC721NonexistentToken") ||
-                                err.message.toLowerCase().includes("missing revert data")
+                                err.includes("erc721nonexistenttoken") ||
+                                err.includes("token does not exist") ||
+                                err.includes("missing revert data")
                             ) {
                                 console.warn(`Le token ${i} n'existe pas (tokenURI) – ignoré.`);
                                 continue;
@@ -96,7 +94,6 @@ export function useMyNFTs(): Diplome[] {
                         }
                         console.log(`Token ${i} URI: ${tokenUri}`);
 
-                        // Récupérer les métadonnées via fetch
                         const res = await fetch(tokenUri);
                         console.log(`Status for token ${i}: ${res.status} ${res.statusText}`);
                         if (!res.ok) {
@@ -125,7 +122,7 @@ export function useMyNFTs(): Diplome[] {
                             issuer: metadata.issuer || "",
                             signer: metadata.signer || ""
                         });
-                    } catch (err) {
+                    } catch (err: unknown) {
                         console.error("Erreur lors du chargement du token", i, err);
                     }
                 }

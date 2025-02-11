@@ -1,7 +1,7 @@
 // uploadJSON.js
 const axios = require("axios");
 const fs = require("fs");
-require("dotenv").config();
+import "dotenv/config";
 
 async function uploadJSON(filePath) {
     const url = "https://api.pinata.cloud/pinning/pinJSONToIPFS";
