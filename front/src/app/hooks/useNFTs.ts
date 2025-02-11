@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import NFT_ABI from "../../abis/ESGI_diplomes.json";
 import { Diplome } from "@/interfaces/diplomes";
-require("dotenv").config();
 
 export function useNFTs(): Diplome[] {
     const [nfts, setNFTs] = useState<Diplome[]>([]);
@@ -38,7 +37,7 @@ export function useNFTs(): Diplome[] {
                 const countBN = await contract.getCount();
                 const count = Number(countBN);
                 console.log("Nombre total de NFT :", count);
-                let items: Diplome[] = [];
+                const items: Diplome[] = [];
 
                 for (let i = 0; i < count; i++) {
                     try {
@@ -76,6 +75,7 @@ export function useNFTs(): Diplome[] {
                             issuer: metadata.issuer || "",
                             signer: metadata.signer || ""
                         });
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     } catch (err: any) {
                         // Si l'erreur indique que le token n'existe pas, on le passe
                         if (err.message && err.message.includes("Token does not exist")) {

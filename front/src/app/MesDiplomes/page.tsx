@@ -13,7 +13,7 @@ const MesDiplomes = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-5">Mes Diplômes</h1>
             {myNFTs.length === 0 ? (
                 <p className="text-center text-gray-600">
-                    Aucun diplôme n'a encore été minté pour ce compte.
+                    Aucun diplôme n{`&apos`}a encore été minté pour ce compte.
                 </p>
             ) : (
                 <NftsList list={myNFTs} />

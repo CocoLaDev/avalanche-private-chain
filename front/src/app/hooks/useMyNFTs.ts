@@ -5,10 +5,10 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import NFT_ABI from "../../abis/ESGI_diplomes.json";
 import { Diplome } from "@/interfaces/diplomes";
-require("dotenv").config();
 
 declare global {
     interface Window {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ethereum?: any;
     }
 }
@@ -54,7 +54,7 @@ export function useMyNFTs(): Diplome[] {
                 }
                 const count = Number(countBN);
                 console.log("Nombre total de NFT :", count);
-                let items: Diplome[] = [];
+                const items: Diplome[] = [];
 
                 for (let i = 0; i < count; i++) {
                     try {
@@ -62,6 +62,7 @@ export function useMyNFTs(): Diplome[] {
                         let owner;
                         try {
                             owner = await contract.ownerOf(i);
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         } catch (err: any) {
                             if (
                                 err.message.includes("ERC721NonexistentToken") ||
@@ -81,6 +82,7 @@ export function useMyNFTs(): Diplome[] {
                         let tokenUri: string;
                         try {
                             tokenUri = await contract.tokenURI(i);
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         } catch (err: any) {
                             if (
                                 err.message.includes("ERC721NonexistentToken") ||
