@@ -9,6 +9,7 @@ export const pinata = {
       const response = await axios.post(url, formData, {
         maxContentLength: Infinity,
         headers: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           "Content-Type": `multipart/form-data; boundary=${(formData as any)._boundary}`,
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT}`
         }

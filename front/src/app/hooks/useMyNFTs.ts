@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import NFT_ABI from "../../abis/ESGI_diplomes.json"; // Assurez-vous que le chemin est correct
 import { Diplome } from "@/interfaces/diplomes";
+// Import dotenv n'est généralement pas nécessaire côté client dans Next.js
+// import "dotenv/config"; // À supprimer dans les composants client
 
 declare global {
     interface Window {
@@ -34,7 +36,6 @@ export function useMyNFTs(): Diplome[] {
                 }
 
                 const signer = await provider.getSigner();
-                const userAddress = (await signer.getAddress()).toLowerCase();
 
                 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
                 console.log("Contract Address :", contractAddress);
@@ -61,12 +62,12 @@ export function useMyNFTs(): Diplome[] {
                         // Vérifier que le token existe via ownerOf
                         try {
                             await contract.ownerOf(i);
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        } catch (err: any) {
+                        } catch (err: unknown) {
+                            const errorMsg = err instanceof Error ? err.message.toLowerCase() : "";
                             if (
-                                err.includes("erc721nonexistenttoken") ||
-                                err.includes("token does not exist") ||
-                                err.includes("missing revert data")
+                                errorMsg.includes("erc721nonexistenttoken") ||
+                                errorMsg.includes("token does not exist") ||
+                                errorMsg.includes("missing revert data")
                             ) {
                                 console.warn(`Le token ${i} n'existe pas (ownerOf) – ignoré.`);
                                 continue;
@@ -79,12 +80,12 @@ export function useMyNFTs(): Diplome[] {
                         let tokenUri: string;
                         try {
                             tokenUri = await contract.tokenURI(i);
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        } catch (err: any) {
+                        } catch (err: unknown) {
+                            const errorMsg = err instanceof Error ? err.message.toLowerCase() : "";
                             if (
-                                err.includes("erc721nonexistenttoken") ||
-                                err.includes("token does not exist") ||
-                                err.includes("missing revert data")
+                                errorMsg.includes("erc721nonexistenttoken") ||
+                                errorMsg.includes("token does not exist") ||
+                                errorMsg.includes("missing revert data")
                             ) {
                                 console.warn(`Le token ${i} n'existe pas (tokenURI) – ignoré.`);
                                 continue;

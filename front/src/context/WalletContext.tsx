@@ -2,7 +2,6 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
-import { ethers } from "ethers";
 
 interface WalletContextProps {
     account: string | null;

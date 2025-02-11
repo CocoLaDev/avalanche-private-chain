@@ -73,6 +73,7 @@ const Form = () => {
         try {
             const tx = await mintDiplomeNFT(metadataUrl);
             // Récupérer le hash de la transaction (tx.hash ou tx.transactionHash)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const txHash = (tx as any).hash || (tx as any).transactionHash;
             setMessage("Transaction envoyée: " + txHash);
 
@@ -81,6 +82,7 @@ const Form = () => {
             await provider.waitForTransaction(txHash);
 
             setMessage("Diplôme ajouté avec succès!");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error("Erreur lors du mint:", error);
             setMessage("Erreur lors du mint: " + error.message);

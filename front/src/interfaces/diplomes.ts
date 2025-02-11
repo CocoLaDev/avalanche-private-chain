@@ -7,6 +7,7 @@ export interface ProgrammeNFT {
     image: string;
     studentId: string;
     Program: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     "Academic Progress": any[];
     programStatus: {
         status: string;

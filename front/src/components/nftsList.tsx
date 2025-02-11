@@ -19,6 +19,7 @@ const NftsList = ({ list }: { list: Diplome[] }) => {
             setRevokeMessage(`Révocation du token ${tokenId} en cours...`);
             const tx = await revokeNFT(tokenId);
             // Récupérer le hash de la transaction (tx.hash ou tx.transactionHash)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const txHash = (tx as any).hash || (tx as any).transactionHash;
             setRevokeMessage(`Transaction de révocation envoyée: ${txHash}`);
 
@@ -30,6 +31,7 @@ const NftsList = ({ list }: { list: Diplome[] }) => {
 
             // Rafraîchir la page pour mettre à jour l'affichage
             window.location.reload();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error("Erreur lors de la révocation du token", tokenId, error);
             // Si l'erreur indique que l'utilisateur n'est pas autorisé, afficher un message explicite
