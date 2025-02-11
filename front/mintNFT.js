@@ -30,8 +30,8 @@ async function main() {
     const nftContract = new ethers.Contract(contractAddress, nftAbi, signer);
 
     // Definir las rutas absolutas a los archivos de metadata
-    const programmePath = path.join(__dirname, "../esgi-nft-dynamics/metadata/programme.json");
-    const performancePath = path.join(__dirname, "../esgi-nft-dynamics/metadata/performance.json");
+    const programmePath = path.join(__dirname, "../avalanche-projet-nft/metadata/programme.json");
+    const performancePath = path.join(__dirname, "../avalanche-projet-nft/metadata/performance.json");
 
     console.log("Uploading programme metadata...");
     const programmeCid = await uploadJSON(programmePath);

@@ -28,9 +28,14 @@
   "programStatus": {
     "status": "ACTIVE",
     "certificateIssuedDate": "2025-02-08",
-    "comments": "Diplôme en cours, progression satisfaisante. Degree Completed with Success / Certificate Revoked. Please contact ESGI Program Administration"
+    "comments": "Diplôme en cours, progression satisfaisante."
   },
   "ipfsCID": "ipfs://QmExampleProgramCID",
   "issuer": "ESGI",
-  "signer": "0x351024A4EC50612C8D1CF70cd508F77f37Da53F8"
+  "signer": "0x351024A4EC50612C8D1CF70cd508F77f37Da53F8",
+  "title": "Diplôme ESGI",
+  "description": "Diplôme délivré par l'École Supérieure de Génie Informatique",
+  "location": "Paris",
+  "date": "2025-02-08",
+  "image": "https://www.mon-diplome.fr/Diplome/700-950680-ESGI,-%C3%89cole-Superieure-de-Genie-Informatique.jpg"
 }

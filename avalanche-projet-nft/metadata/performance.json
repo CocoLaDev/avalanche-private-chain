@@ -2,6 +2,11 @@
   "year": "3rd Year",
   "studentId": "ESGI-2025001",
   "studentName": "Juan Pérez",
+  "title": "Performance Année 3",
+  "description": "Performance globale satisfaisante, participation aux projets extra-curriculaires remarquable.",
+  "location": "Paris",
+  "date": "2023-06-30",
+  "image": "https://as2.ftcdn.net/v2/jpg/00/06/95/35/1000_F_6953559_rPiMmmKCpOWa599JLorPZDv8H2IDNFN4.jpg",
   "courses": [
     {
       "courseName": "Algorithmes avancés",
