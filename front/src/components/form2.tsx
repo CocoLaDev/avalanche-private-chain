@@ -1,7 +1,7 @@
 "use client";
 import { Diplome } from "@/interfaces/diplomes";
 import { uploadFile, uploadJson } from "@/services/uploadFile";
-import { mintDiplomeNFT } from "../services/nftService";
+import { mintPerfomanceNFT } from "../services/nftService";
 import { ethers } from "ethers";
 import { useState } from "react";
 
@@ -33,6 +33,10 @@ const Form = () => {
         const studentName = (document.getElementById("StudentName") as HTMLInputElement).value;
         const yearStartDate = (document.getElementById("yearStartDate") as HTMLInputElement).value;
         const yearEndDate = (document.getElementById("yearEndDate") as HTMLInputElement).value;
+        const courseName = (document.getElementById("courseName") as HTMLInputElement).value;
+        const courseGrade = (document.getElementById("courseGrade") as HTMLInputElement).value;
+        const courseResult = (document.getElementById("courseResult") as HTMLInputElement).value;
+        const courseComment = (document.getElementById("courseComment") as HTMLInputElement).value;
 
         // Construire l'objet métadonnées pour le NFT en respectant la structure de vos interfaces.
         // Ici, nous utilisons la structure d'un NFT de Programme.
@@ -47,7 +51,12 @@ const Form = () => {
             Program: "Master - Ingénierie de la Blockchain",
             programStatus: { status: "", certificateIssuedDate: "", comments: "" },
             studentName,
-            courses: [],
+            courses: [{
+                    courseName,
+                    grade: courseGrade,
+                    result: courseResult,
+                    comments: courseComment
+                }],
             yearStartDate,
             yearEndDate,
             academicStatus: { status: "", comments: "" },
@@ -75,7 +84,7 @@ const Form = () => {
         // Appeler la fonction de mint pour créer le NFT avec la metadata
         setMessage("Metadata uploadée. Minting NFT...");
         try {
-            const tx = await mintDiplomeNFT(metadataUrl);
+            const tx = await mintPerfomanceNFT(metadataUrl, 1);
             // Récupérer le hash de la transaction (tx.hash ou tx.transactionHash)
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const txHash = (tx as any).hash || (tx as any).transactionHash;
@@ -86,7 +95,7 @@ const Form = () => {
             await provider.waitForTransaction(txHash);
 
             setMessage("Diplôme ajouté avec succès!");
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error("Erreur lors du mint:", error);
             setMessage("Erreur lors du mint: " + error.message);
@@ -164,6 +173,35 @@ const Form = () => {
                                 id="yearEndDate"
                             />
                         </div>
+                    </div>
+                    <label className="block text-sm pl-2 text-gray-700">Cours</label>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <input
+                        className="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                        placeholder="Nom du cours"
+                        type="text"
+                        id="coursesName"
+                    />
+                    <input
+                        className="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                        placeholder="Note"
+                        type="text"
+                        id="coursesGrade"
+                    />
+                    </div>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <input
+                        className="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                        placeholder="Resultats"
+                        type="text"
+                        id="coursesResult"
+                    />
+                    <input
+                        className="w-full rounded-lg border border-gray-200 p-3 text-sm"
+                        placeholder="Commentaire"
+                        type="text"
+                        id="coursesComment"
+                    />
                     </div>
                     <input
                         className="w-full rounded-lg p-3 text-sm"

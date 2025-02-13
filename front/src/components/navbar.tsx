@@ -32,6 +32,11 @@ const Navbar = () => {
                                     </Link>
                                 </li>
                                 <li>
+                                    <Link className="text-gray-500 transition hover:text-gray-500/75" href="/AjouterPerformance">
+                                        Ajouter une performance
+                                    </Link>
+                                </li>
+                                <li>
                                     <Link className="text-gray-500 transition hover:text-gray-500/75" href="/MesDiplomes">
                                         Mes diplômes
                                     </Link>
