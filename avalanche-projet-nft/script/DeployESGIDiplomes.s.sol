@@ -6,11 +6,10 @@ import "../src/ESGI_diplomes.sol";
 
 contract DeployESGIDiplomes is Script {
     function run() external {
-        // Inicia la transmisión (broadcast) para enviar transacciones
+        // demarre la diffusion des transactions
         vm.startBroadcast();
 
-        // Despliega el contrato sin argumentos. La cuenta que despliegue (msg.sender)
-        // se convertirá en admin y tendrá los roles.
+        // le deployeur du contrat sera l'admin du contrat
         ESGI_diplomes nft = new ESGI_diplomes();
         console.log("ESGI_diplomes deployed at:", address(nft));
 

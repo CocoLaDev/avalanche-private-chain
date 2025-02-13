@@ -47,7 +47,7 @@ contract ESGI_diplomes is ERC721, AccessControl {
         delete _tokenTypes[tokenId];
     }
 
-    // Nueva implementación de tokenURI utilizando try/catch con this.ownerOf
+    // fonction pour recuperer le tokenURI d'un token
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         try this.ownerOf(tokenId) returns (address) {
             return _tokenURIs[tokenId];

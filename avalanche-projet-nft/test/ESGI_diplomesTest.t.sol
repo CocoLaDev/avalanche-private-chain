@@ -126,6 +126,23 @@ contract ESGIDiplomesTest is Test {
         assertEq(uri, initialURI, "Le tokenURI doit correspondre a la valeur initiale");
     }
 
+    function testSupportsInterface() public view {
+        bool result = nft.supportsInterface(0x01ffc9a7);
+        assertTrue(result, "Le contrat doit supporter l'interface ERC721");
+    }
+
+    function testNonAdminCannotUpdateTokenURITokenNotExist() public {
+        vm.prank(admin);
+        vm.expectRevert("Token does not exist");
+        nft.updateTokenURI(0, updatedURI);
+    }
+
+    function testRevokeTokenNotExist() public {
+        vm.prank(admin);
+        vm.expectRevert("Token does not exist");
+        nft.revokeToken(0);
+    }
+
     // Teste que plusieurs performances peuvent etre associees a un diplome
     function testGetMultiplePerformances() public {
         vm.prank(admin);
